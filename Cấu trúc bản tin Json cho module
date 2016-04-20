@@ -1,0 +1,190 @@
+SmartSwitch
+===========
+1. Sơ lược hoạt động của module
+
+Module gồm 3 kênh rơ le, đóng cắt trực tiếp thông qua nút cảm ứng, điều khiển qua internet hoặc hẹn giờ (chạy thời gian thực).
+Module nhận yêu cầu (request) từ broker mqtt, thực thi sau đó phản hồi (respond) cho broker, các bản tin yêu cầu/phản hồi được 
+mã hóa dưới dạng Json.
+
+2. Nhóm các bản tin yêu cầu
+---------------------------
+2.1 Hàm đọc trạng thái kênh
+   ------------------------
+- Cấu trúc 
+  { “ch_getstt” : “request” }
+- Thông số: không có (value chỉ bao gồm từ khóa"request")
+
+2.2 Hàm điều khiển "đơn" kênh
+    ------------------------
+- Cấu trúc:
+  {
+  "ch_control": 
+    {
+      "id": "0",
+      "value": "0"
+    }
+  }
+- Thông số:
+  id[kiểu số nguyên]: địa chỉ kênh, 0~7; id=255 điều khiển "tất cả" các kênh
+  value[kiểu số nguyên]: giá trị 0~100; 0 - OFF, 100 - ON (version sau có thể dùng điều khiển dimmer)
+  
+2.3 Hàm đặt thời gian thực
+    ---------------------
+- Cấu trúc:
+  {
+    "realtime_set": {
+      "hour": "15",
+      "min": "59",
+      "sec": "30",
+      "day": "3",
+      "date": "31",
+      "month": "12",
+      "year": "15"
+    }
+  }
+- Thông số:
+  realtime_set: key word
+  hour[số nguyên]: giá trị 0~23, giờ
+  min[số nguyên] : giá trị 0~59, phút
+  sec[số nguyên] : giá trị 0~59, giây
+  day[số nguyên] : giá trị 1~7 tương ứng với Sun-Mon-Tue....Sat, thứ trong tuần
+  date[số nguyên]: giá trị 1~31, ngày trong tháng
+  month[số nguyên]: giá trị 1~12, tháng
+  year[số nguyên]: giá tị 0~99, hai chữ số cuối của năm (2000~2099)
+  
+2.4 Hàm hẹn giờ bật tắt
+    -------------------
+- Cấu trúc:
+  {"timer_set": {
+      "id": "1",
+      "on": {
+        "hour": "8",
+        "min": "30"
+      },
+      "off": {
+        "hour": "9",
+        "min": "30"
+      },
+      “status”: “1”,
+      "repeat": “5”,
+      "channel": “7”,
+      "brightness": "80",
+    }
+  }
+- Thông số:
+ timer_set: từ khóa hàm
+ id[số nguyên]  : giá trị 1~24, địa chỉ 24 fixed timer
+ on/off: hour[số nguyên], giá trị 0-23, giờ bật/tắt
+         min[số nguyên], giá trị 0-59, phút bật/tắt
+         (Các kênh được chỉ định sẽ bật/tắt theo khoảng thời gian này)
+  repeat[số nguyên]: giá trị tương đương với 1byte, thể hiện các ngày trong tuần timer có hiệu lực
+                     Ví dụ: Lặp lại timer vào các ngày Chủ nhật và Thứ 3 (1-ON/ 0-OFF)
+                            7-6-5-4-3-2-CN => 0000 0101(B) => 5(Dec) => repeat = 5
+  status[số nguyên]: 1-Enable / 0-Disable / ( 2 - This timer hasn't setup yet)
+  channel[số nguyên]: giá trị tương ứng 1byte, thể hiện các kênh chịu sự tác động của timer
+                      Ví dụ: Cài đặt cho kênh 1, 2và 3 (1-ON / 0-OFF)
+                             Kênh 8-7-6-5-4-3-2-1 => 0000 0111(B) => 7(Dec) = channel = 7
+  brightness[số nguyên]: giá trị 0~100, độ sáng của led
+  
+2.5 Hàm đọc giá trị timer 
+    ---------------------
+  Mô tả: Trả về giá trị của timer nếu đã được setup(enable/disable), hoặc chưa được cài đặt
+- Cấu trúc:
+  {“timer_get”:{“id”:“1”}}
+- Thông số:
+  timer_get: keyword
+  id[số nguyên]: giá trị 1~24, địa chỉ 24 fixed timer
+  
+2.6 Hàm điều chỉnh độ sáng đèn led báo trạng thái
+    ---------------------------------------------
+- Cấu trúc:
+  { "brightness": "100" }
+- Thông số:
+  brightness[số nguyên]: giá trị 0~100
+  
+3. Nhóm bản tin phản hồi
+
+3.1 Trạng thái các kênh
+    -------------------
+- Cấu trúc:
+  {
+   "ch_getstt": {
+      "quantity": "3",
+      "status": [
+        "100",
+        "0",
+        "100"
+      ]
+    }
+ }
+- Thông số:
+ quantity: số lượng kênh
+ status : mảng giá trị các kênh có chỉ số tương ứng
+ 
+3.2 Hàm phản hồi điều khiển đơn kênh
+    --------------------------------
+- Cấu trúc:
+{
+  "ch_control": {
+    "quantity": "3",
+    "status": [
+      "100",
+      "0",
+      "100"
+    ]
+  }
+}
+- Thông số: tương tự 3.1
+
+3.3 Hàm phản hồi kết quả đặt thời gian thực
+    ---------------------------------------
+- Cấu trúc:
+ {
+  "realtime_set": "successful"
+ }
+- Thông số:
+ realtime_set: keyword, successful/faied tương ứng với thành công/ lỗi
+ 
+3.4 Hàm phản hồi kết quả hẹn giờ timer
+    ----------------------------------
+- Cấu trúc:
+ {
+  "timer_set": "successful"
+ }
+- Thông số:
+ timer_set: keyword, successful/faied tương ứng với thành công/ lỗi
+
+3.5 Hàm phản hồi giá trị timer
+    --------------------------
+- Cấu trúc:
+  {
+  "timer_get": {
+    "id": 240,
+    "on": {
+      "hour": 15,
+      "min": 15
+    },
+    "off": {
+      "hour": 16,
+      "min": 27
+    },
+    "repeat": 15,
+    "status": 1,
+    "channel": 7,
+    "brightness": 100
+  }
+ }
+- Thông số: tương tự 2.5
+
+3.6 Hàm phản hồi giá trị đặt độ sáng led
+    ------------------------------------
+- Cấu trúc:
+ {
+  "brightness": "successful"
+ }
+- Thông số:
+ brightness: keyword, successful/faied tương ứng với thành công/ lỗi
+         
+
+  
+
