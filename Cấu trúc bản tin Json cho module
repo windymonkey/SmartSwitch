@@ -58,10 +58,10 @@ mã hóa dưới dạng Json.
   {"timer_set": {
       "id": "1",
       "time": ["8","30","8","31"],
-      “status”: “1”,
+      “stt”: “1”,
       "repeat": “5”,
       "ch": “255”,
-      "brightness": "80",
+      "bright": "80",
     }
   }
 - Thông số:
@@ -74,13 +74,13 @@ mã hóa dưới dạng Json.
   repeat[số nguyên]: giá trị tương đương với 1byte, thể hiện các ngày trong tuần timer có hiệu lực
                      Ví dụ: Lặp lại timer vào các ngày Chủ nhật và Thứ 3 (1-ON/ 0-OFF)
                             7-6-5-4-3-2-CN => 0000 0101(B) => 5(Dec) => repeat = 5
-  status[số nguyên]: 1-Enable / 0-Disable / ( 2 - This timer hasn't setup yet)
+  stt[số nguyên]: 1-Enable / 0-Disable / ( 2 - This timer hasn't setup yet)
   ch[số nguyên]: giá trị tương ứng 1byte, thể hiện các kênh chịu sự tác động của timer
                       Ví dụ: Cài đặt cho kênh 1 và 3 (1-ON / 0-OFF)
                              Kênh 8-7-6-5-4-3-2-1 => 0000 0101(B) => 5(Dec) = channel = 5
                              Nếu điều khiển tất cả các kênh( version hiện tại có 3 kênh) thì ch = 1111 1111(B) = FF(H) = 255(Dec)
                              
-  brightness[số nguyên]: giá trị 0~100, độ sáng của led
+  bright[số nguyên]: giá trị 0~100, độ sáng của led
   
 2.5 Hàm đọc giá trị timer 
     ---------------------
@@ -94,9 +94,9 @@ mã hóa dưới dạng Json.
 2.6 Hàm điều chỉnh độ sáng đèn led báo trạng thái
     ---------------------------------------------
 - Cấu trúc:
-  { "brightness": "100" }
+  { "bright": "100" }
 - Thông số:
-  brightness[số nguyên]: giá trị 0~100
+  bright[số nguyên]: giá trị 0~100
 
 2.7 Hàm reset config
     ----------------
@@ -165,9 +165,9 @@ mã hóa dưới dạng Json.
     "id": 240,
     "time": ["8","30","8","31"],
     "repeat": 15,
-    "status": 1,
+    "stt": 1,
     "channel": 7,
-    "brightness": 100
+    "bright": 100
   }
  }
 - Thông số: tương tự 2.5
@@ -176,19 +176,19 @@ mã hóa dưới dạng Json.
     ------------------------------------
 - Cấu trúc:
  {
-  "brightness": "successful"
+  "bright": "successful"
  }
 - Thông số:
- brightness: keyword, successful/faied tương ứng với thành công/ lỗi
+ bright: keyword, successful/faied tương ứng với thành công/ lỗi
          
 
 4. Một số hàm điều khiển mẫu
    -------------------------
 {"ch_getstt":"request"}
 {"ch_control":{"id":"0","value":"0"}}
-{"brightness":"100"}
+{"bright":"100"}
 {"realtime_set":{"hour":"16","min":"25","sec":"30","day":"1","date":"24","month":"4","year":"16"}}
-{"timer_set":{"id":"1","time":["8","33","8","34"],"status":"1","repeat":"127","ch":"255","brightness":"80"}}
+{"timer_set":{"id":"1","time":["8","33","8","34"],"stt":"1","repeat":"127","ch":"255","bright":"80"}}
 {"timer_get":{"id":"1"}}
 {"config":"reset"}
 
