@@ -182,5 +182,13 @@ mã hóa dưới dạng Json.
  brightness: keyword, successful/faied tương ứng với thành công/ lỗi
          
 
-  
+4. Một số hàm điều khiển mẫu
+   -------------------------
+{"ch_getstt":"request"}
+{"ch_control":{"id":"0","value":"0"}}
+{"brightness":"100"}
+{"realtime_set":{"hour":"16","min":"25","sec":"30","day":"1","date":"24","month":"4","year":"16"}}
+{"timer_set":{"id":"1","time":["8","33","8","34"],"status":"1","repeat":"127","ch":"255","brightness":"80"}}
+{"timer_get":{"id":"1"}}
+{"config":"reset"}
 
