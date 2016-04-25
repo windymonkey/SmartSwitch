@@ -57,33 +57,29 @@ mã hóa dưới dạng Json.
 - Cấu trúc:
   {"timer_set": {
       "id": "1",
-      "on": {
-        "hour": "8",
-        "min": "30"
-      },
-      "off": {
-        "hour": "9",
-        "min": "30"
-      },
+      "time": ["8","30","8","31"],
       “status”: “1”,
       "repeat": “5”,
-      "channel": “7”,
+      "ch": “255”,
       "brightness": "80",
     }
   }
 - Thông số:
  timer_set: từ khóa hàm
  id[số nguyên]  : giá trị 1~24, địa chỉ 24 fixed timer
- on/off: hour[số nguyên], giá trị 0-23, giờ bật/tắt
-         min[số nguyên], giá trị 0-59, phút bật/tắt
+ time: chứa 4 thông số: giờ bật, phút bật, giờ tắt, phút tắt
+         giờ [số nguyên], giá trị 0-23, giờ bật/tắt
+         phút [số nguyên], giá trị 0-59, phút bật/tắt
          (Các kênh được chỉ định sẽ bật/tắt theo khoảng thời gian này)
   repeat[số nguyên]: giá trị tương đương với 1byte, thể hiện các ngày trong tuần timer có hiệu lực
                      Ví dụ: Lặp lại timer vào các ngày Chủ nhật và Thứ 3 (1-ON/ 0-OFF)
                             7-6-5-4-3-2-CN => 0000 0101(B) => 5(Dec) => repeat = 5
   status[số nguyên]: 1-Enable / 0-Disable / ( 2 - This timer hasn't setup yet)
-  channel[số nguyên]: giá trị tương ứng 1byte, thể hiện các kênh chịu sự tác động của timer
-                      Ví dụ: Cài đặt cho kênh 1, 2và 3 (1-ON / 0-OFF)
-                             Kênh 8-7-6-5-4-3-2-1 => 0000 0111(B) => 7(Dec) = channel = 7
+  ch[số nguyên]: giá trị tương ứng 1byte, thể hiện các kênh chịu sự tác động của timer
+                      Ví dụ: Cài đặt cho kênh 1 và 3 (1-ON / 0-OFF)
+                             Kênh 8-7-6-5-4-3-2-1 => 0000 0101(B) => 5(Dec) = channel = 5
+                             Nếu điều khiển tất cả các kênh( version hiện tại có 3 kênh) thì ch = 1111 1111(B) = FF(H) = 255(Dec)
+                             
   brightness[số nguyên]: giá trị 0~100, độ sáng của led
   
 2.5 Hàm đọc giá trị timer 
@@ -101,7 +97,14 @@ mã hóa dưới dạng Json.
   { "brightness": "100" }
 - Thông số:
   brightness[số nguyên]: giá trị 0~100
-  
+
+2.7 Hàm reset config
+    ----------------
+    Xóa cấu hình được lưu trước đó. Quay trở lại chế độ AP để nhận cấu hình mới
+- Cấu trúc:
+   {"config":"reset"}
+- Thông số: none
+    
 3. Nhóm bản tin phản hồi
 
 3.1 Trạng thái các kênh
@@ -160,14 +163,7 @@ mã hóa dưới dạng Json.
   {
   "timer_get": {
     "id": 240,
-    "on": {
-      "hour": 15,
-      "min": 15
-    },
-    "off": {
-      "hour": 16,
-      "min": 27
-    },
+    "time": ["8","30","8","31"],
     "repeat": 15,
     "status": 1,
     "channel": 7,
