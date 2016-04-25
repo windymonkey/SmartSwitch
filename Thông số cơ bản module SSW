@@ -1,0 +1,21 @@
+1. Thông số cơ bản
+
+  Host: 128.199.139.40
+  Port : 1883
+  AP_SSID: SSW000000001
+  AP_PW: 88888888
+  topic_sub: ssw/000000001/in
+  topic_pub: ssw/000000001/out
+  
+  
+2. Câu hình lần đầu
+  Truy cập vào ESP với thông số AP_SSID+AP_PW ở trên, nhập địa chỉ "10.1.1.1" vào trình duyệt để mở trang config,
+  nhập AP + PW để ESP kết nối tới
+  Chờ ESP kết nối với AP mới và đăng nhập vào mqtt server
+
+3. Xóa cấu hình cũ
+  2 cách:
+  + Gửi lệnh reset config (xem mô tả bản tin json) tới module từ mqtt server
+  + Nối thông chân GPIO_0 với GND trong 5s
+
+  
